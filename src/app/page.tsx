@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArtworkCard } from "@/components/artwork-card";
 import { PageShell } from "@/components/page-shell";
+import { ReviewsSection } from "@/components/reviews-section";
 import { SectionHeading } from "@/components/section-heading";
 import { featuredArtworks, availableOriginals } from "@/data/artworks";
 import { businessInfo } from "@/data/businessInfo";
@@ -98,6 +99,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <ReviewsSection />
 
       <section className="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 lg:grid-cols-[0.9fr_1.1fr]">
         <div>

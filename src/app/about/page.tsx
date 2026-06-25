@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PageShell } from "@/components/page-shell";
+import { ReviewsSection } from "@/components/reviews-section";
 import { SectionHeading } from "@/components/section-heading";
 import { businessInfo } from "@/data/businessInfo";
 
@@ -28,6 +29,7 @@ export default function AboutPage() {
           </Link>
         </div>
       </section>
+      <ReviewsSection />
     </PageShell>
   );
 }

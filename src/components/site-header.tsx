@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AdminUnlock } from "@/components/admin-unlock";
 
 const navItems = [
   { href: "/", label: "Home" },
@@ -13,12 +14,9 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-stone-200/80 bg-[#fbf8f1]/90 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
-        <Link
-          href="/"
-          className="origin-left font-serif text-xl tracking-tight text-stone-950 transition duration-300 ease-out hover:scale-105 hover:text-sage"
-        >
+        <AdminUnlock className="origin-left font-serif text-xl tracking-tight text-stone-950 transition duration-300 ease-out hover:scale-110 hover:text-sage">
           Christine Porter
-        </Link>
+        </AdminUnlock>
         <nav className="hidden items-center gap-7 text-xs font-semibold uppercase tracking-[0.18em] text-stone-700 md:flex">
           {navItems.map((item) => (
             <Link key={item.href} href={item.href} className="hover:text-stone-950">

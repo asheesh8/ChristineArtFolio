@@ -46,7 +46,7 @@ const curatedArtworks: Artwork[] = [
     category: "Pastel",
     medium: "Pastel",
     description:
-      "A soft, handmade work from Christine's public Zenfolio collection.",
+      "A soft, handmade work with gentle texture and a quiet sense of presence.",
     image: "/christine-assets/christine-pastel-789b0c68c2.jpg",
     availableOriginal: true,
     originalStatus: "Inquire",
@@ -127,7 +127,7 @@ const curatedArtworks: Artwork[] = [
     category: "Fine Art",
     medium: "Fine art",
     description:
-      "A catalog placeholder title for an untitled public Zenfolio artwork.",
+      "An untitled fine art piece available for collector inquiry and print conversation.",
     image: "/christine-assets/christine-artwork-d7b0f82810.jpg",
     availableOriginal: true,
     originalStatus: "Inquire",
@@ -215,8 +215,8 @@ const scrapedArtworks: Artwork[] = (manifest as ManifestItem[])
       medium,
       description:
         item.alt || item.guessed_title
-          ? `Pulled from Christine's public Zenfolio catalog for local review and organization.`
-          : `Untitled public Zenfolio asset prepared for client review and metadata cleanup.`,
+          ? `A cataloged work from Christine's current art and photography collection.`
+          : `An untitled work available for collector review and inquiry.`,
       image: `/christine-assets/${item.filename}`,
       availableOriginal: isOriginal,
       originalStatus: isOriginal ? "Inquire" : "Prints Only",

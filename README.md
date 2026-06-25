@@ -1,6 +1,6 @@
 # Christine Porter Fine Art
 
-Modern artist website and print-ordering preview for Christine Porter Fine Art / Christine Porter Photography.
+Modern artist website and print-ordering catalog for Christine Porter Fine Art / Christine Porter Photography.
 
 ## Run locally
 
@@ -27,12 +27,12 @@ Only use downloaded images with Christine Porter's permission. The local copy av
 - `src/data/categories.ts` gallery categories
 - `src/data/businessInfo.ts` client and studio details
 - `src/data/printOptions.ts` print sizes, materials, framing options, and ordering steps
-- `src/app/order-prints` mocked print inquiry flow
-- `src/app/admin` placeholder for future artwork, inquiry, availability, pricing, and settings management
+- `src/app/order-prints` print inquiry flow
+- `src/app/admin` studio dashboard for artwork, inquiry, availability, pricing, and settings management
 
-## Future Supabase plan
+## Database plan
 
-Add tables for artworks, categories, print inquiries, original inquiries, availability history, and site settings. The mocked form and admin placeholder are structured so they can be swapped for authenticated Supabase writes later.
+Add tables for artworks, categories, print inquiries, original inquiries, availability history, and site settings. The dashboard is structured so local state can be swapped for authenticated database writes later.
 
 ## Deployment notes
 

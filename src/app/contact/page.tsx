@@ -9,7 +9,7 @@ export default function ContactPage() {
         <SectionHeading
           eyebrow="Contact"
           title="Ask about prints, originals, and framing."
-          copy="Use this page for direct inquiries while the full ordering/admin workflow is still mocked."
+          copy="Reach out about a specific piece, a print order, an original artwork inquiry, or framing ideas."
         />
         <div className="rounded-[2rem] border border-stone-200 bg-white p-8">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sage">

@@ -25,8 +25,8 @@ export function SiteFooter() {
           <Link href="/contact" className="mt-3 block hover:text-white">
             Contact Christine
           </Link>
-          <Link href="/admin" className="block hover:text-white">
-            Admin placeholder
+          <Link href="/order-prints" className="block hover:text-white">
+            Order a Print
           </Link>
         </div>
       </div>

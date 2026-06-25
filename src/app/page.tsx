@@ -54,7 +54,7 @@ export default function Home() {
           <SectionHeading
             eyebrow="Featured works"
             title="A softer catalog for artwork with a sense of place."
-            copy="This preview gathers Christine's public work into a calm, editorial layout that feels more like a fine art print room than a generic portfolio."
+            copy="Christine's work is gathered into a calm, editorial layout that feels more like a fine art print room than a generic portfolio."
           />
           <div className="mt-10 grid gap-6 md:grid-cols-3">
             {featuredArtworks.slice(0, 3).map((artwork) => (
@@ -108,7 +108,7 @@ export default function Home() {
           <SectionHeading
             eyebrow="Print ordering"
             title="A clear path from favorite piece to finished print."
-            copy="For now, inquiries are mocked locally. The structure is ready for Supabase tables later."
+            copy="Choose a piece, request print details, and Christine can personally confirm availability, price, and timing."
           />
           <Link href="/order-prints" className="btn-primary mt-8 inline-flex">
             Start Print Inquiry

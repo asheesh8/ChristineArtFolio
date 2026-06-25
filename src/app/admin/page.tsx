@@ -1,6 +1,15 @@
 import { AdminDashboard } from "@/components/admin-dashboard";
 import { PageShell } from "@/components/page-shell";
 import { SectionHeading } from "@/components/section-heading";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Studio Desk | Christine Porter Fine Art",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default function AdminPage() {
   return (

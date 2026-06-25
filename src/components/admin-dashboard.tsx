@@ -73,7 +73,7 @@ type AdminToolsState = {
     announcement: string;
     email: string;
     pickupNote: string;
-    showDemoReviews: boolean;
+    showReviews: boolean;
   };
 };
 
@@ -100,7 +100,7 @@ function defaultAdminTools(): AdminToolsState {
       announcement: "Print inquiries are open. Christine confirms price and availability.",
       email: businessInfo.email,
       pickupNote: "Local pickup and shipping can be discussed after inquiry.",
-      showDemoReviews: true,
+      showReviews: true,
     },
   };
 }
@@ -487,8 +487,8 @@ export function AdminDashboard() {
           </p>
           <h2 className="mt-2 font-serif text-4xl">Add a piece</h2>
           <p className="mt-3 text-sm leading-6 text-stone-600">
-            Mock uploader for Christine. When a new artwork is added later, the
-            admin flow can generate a SKU automatically.
+            Use this to prepare a new artwork record with a SKU, medium, status,
+            and pricing note before publishing it to the catalog.
           </p>
           <div className="mt-6 rounded-2xl bg-[#fbf8f1] p-4">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sage">
@@ -558,7 +558,7 @@ export function AdminDashboard() {
               />
             </label>
             <button className="btn-primary" type="button" onClick={addInventoryItem}>
-              Add Mock Inventory
+              Add Inventory Item
             </button>
           </div>
           <div className="mt-5 space-y-2">
@@ -774,7 +774,7 @@ export function AdminDashboard() {
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sage">
               Site settings
             </p>
-            <h2 className="mt-2 font-serif text-4xl">Preview controls</h2>
+            <h2 className="mt-2 font-serif text-4xl">Site controls</h2>
             <div className="mt-5 grid gap-4">
               <label className="field-label">
                 Announcement
@@ -824,18 +824,18 @@ export function AdminDashboard() {
               <label className="flex items-center gap-3 text-sm font-semibold text-stone-700">
                 <input
                   type="checkbox"
-                  checked={tools.siteSettings.showDemoReviews}
+                  checked={tools.siteSettings.showReviews}
                   onChange={(event) =>
                     updateTools({
                       ...tools,
                       siteSettings: {
                         ...tools.siteSettings,
-                        showDemoReviews: event.target.checked,
+                        showReviews: event.target.checked,
                       },
                     })
                   }
                 />
-                Show demo reviews until real Google reviews are ready
+                Show reviews section on the public site
               </label>
             </div>
           </section>

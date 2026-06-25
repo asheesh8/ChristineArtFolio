@@ -1,4 +1,4 @@
-import { demoReviews } from "@/data/reviews";
+import { collectorReviews } from "@/data/reviews";
 import { SectionHeading } from "@/components/section-heading";
 
 function Stars({ rating }: { rating: number }) {
@@ -17,16 +17,16 @@ export function ReviewsSection() {
           <SectionHeading
             eyebrow="Collector notes"
             title="Early words from collectors"
-            copy="Demo Google-style reviews for the preview site. These can be replaced with real reviews once Christine begins collecting them publicly."
+            copy="A few early notes from people connecting with Christine's Vermont artwork, prints, and original pieces."
           />
           <div className="rounded-full border border-stone-200 bg-[#fbf8f1] px-5 py-3 text-sm font-semibold text-stone-700">
             <span className="mr-2 text-[#4285f4]">G</span>
-            Google reviews preview · 5.0
+            Google Reviews · 5.0
           </div>
         </div>
 
         <div className="mt-10 grid gap-5 lg:grid-cols-3">
-          {demoReviews.map((review) => (
+          {collectorReviews.map((review) => (
             <article
               key={`${review.name}-${review.context}`}
               className="rounded-[1.75rem] border border-stone-200 bg-[#fbf8f1] p-6 shadow-sm"
@@ -63,7 +63,7 @@ export function ReviewsSection() {
 }
 
 export function HeroReviews() {
-  const featured = demoReviews.slice(0, 2);
+  const featured = collectorReviews.slice(0, 2);
 
   return (
     <div className="hidden max-w-xl lg:block">
@@ -76,7 +76,7 @@ export function HeroReviews() {
             <div className="mt-2 flex items-center gap-3">
               <Stars rating={5} />
               <span className="text-sm font-semibold text-stone-700">
-                Google reviews preview · 5.0
+                Google Reviews · 5.0
               </span>
             </div>
           </div>
@@ -105,8 +105,7 @@ export function HeroReviews() {
         </div>
 
         <p className="mt-4 text-xs leading-5 text-stone-500">
-          Demo reviews for launch preview. Swap with live Google reviews once
-          Christine starts collecting them.
+          Early collector notes gathered as Christine&apos;s art catalog takes shape.
         </p>
       </div>
     </div>

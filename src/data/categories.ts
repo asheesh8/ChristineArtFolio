@@ -43,6 +43,6 @@ export const categories: Category[] = [
   {
     name: "Photography",
     slug: "photography",
-    description: "Print-ready images gathered from the public Zenfolio gallery.",
+    description: "Print-ready images from Christine's photography collection.",
   },
 ];

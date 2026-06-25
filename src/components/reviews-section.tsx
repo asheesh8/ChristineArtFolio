@@ -61,3 +61,54 @@ export function ReviewsSection() {
     </section>
   );
 }
+
+export function HeroReviews() {
+  const featured = demoReviews.slice(0, 2);
+
+  return (
+    <div className="hidden max-w-xl lg:block">
+      <div className="relative mt-12 rounded-[1.75rem] border border-stone-200 bg-white/72 p-5 shadow-sm backdrop-blur">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 pb-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sage">
+              Collector notes
+            </p>
+            <div className="mt-2 flex items-center gap-3">
+              <Stars rating={5} />
+              <span className="text-sm font-semibold text-stone-700">
+                Google reviews preview · 5.0
+              </span>
+            </div>
+          </div>
+          <div className="flex h-11 w-11 items-center justify-center rounded-full border border-stone-200 bg-[#fbf8f1] text-xl font-bold">
+            <span className="text-[#4285f4]">G</span>
+          </div>
+        </div>
+
+        <div className="mt-4 grid gap-3">
+          {featured.map((review) => (
+            <article key={review.name} className="rounded-2xl bg-[#fbf8f1] p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="font-semibold text-stone-950">{review.name}</p>
+                  <p className="text-xs text-stone-500">
+                    {review.location} · {review.context}
+                  </p>
+                </div>
+                <Stars rating={review.rating} />
+              </div>
+              <p className="mt-3 line-clamp-2 text-sm leading-6 text-stone-650">
+                “{review.text}”
+              </p>
+            </article>
+          ))}
+        </div>
+
+        <p className="mt-4 text-xs leading-5 text-stone-500">
+          Demo reviews for launch preview. Swap with live Google reviews once
+          Christine starts collecting them.
+        </p>
+      </div>
+    </div>
+  );
+}

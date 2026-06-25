@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArtworkCard } from "@/components/artwork-card";
 import { PageShell } from "@/components/page-shell";
-import { ReviewsSection } from "@/components/reviews-section";
+import { HeroReviews, ReviewsSection } from "@/components/reviews-section";
 import { SectionHeading } from "@/components/section-heading";
 import { featuredArtworks, availableOriginals } from "@/data/artworks";
 import { businessInfo } from "@/data/businessInfo";
@@ -23,6 +23,7 @@ export default function Home() {
             <p className="mt-8 max-w-2xl text-xl leading-9 text-stone-600">
               {businessInfo.tagline}
             </p>
+            <HeroReviews />
           </div>
           <div className="mt-10 flex flex-wrap gap-3">
             <Link className="btn-primary" href="/gallery">

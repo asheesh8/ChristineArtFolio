@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Christine Porter Fine Art
 
-## Getting Started
+Modern artist website and print-ordering preview for Christine Porter Fine Art / Christine Porter Photography.
 
-First, run the development server:
+## Run locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Pull public Zenfolio assets
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+python3 scripts/scrape-christine-zenfolio-assets.py
+```
 
-## Learn More
+The scraper downloads public image assets into `public/christine-assets` and writes `public/christine-assets/manifest.json` with source page, image URL, filename, alt text, guessed title, and file size.
 
-To learn more about Next.js, take a look at the following resources:
+Only use downloaded images with Christine Porter's permission. The local copy avoids hotlinking and is intended for this client redesign.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `src/data/artworks.ts` seed artwork catalog
+- `src/data/categories.ts` gallery categories
+- `src/data/businessInfo.ts` client and studio details
+- `src/data/printOptions.ts` print sizes, materials, framing options, and ordering steps
+- `src/app/order-prints` mocked print inquiry flow
+- `src/app/admin` placeholder for future artwork, inquiry, availability, pricing, and settings management
 
-## Deploy on Vercel
+## Future Supabase plan
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Add tables for artworks, categories, print inquiries, original inquiries, availability history, and site settings. The mocked form and admin placeholder are structured so they can be swapped for authenticated Supabase writes later.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deployment notes
+
+This is a Next.js, TypeScript, Tailwind CSS app. It can be deployed to Vercel or Netlify after confirming final images, artwork names, pricing, original availability, and contact details with Christine.

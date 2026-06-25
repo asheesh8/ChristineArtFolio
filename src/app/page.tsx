@@ -50,7 +50,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-y border-stone-200 bg-white py-16">
+      <section className="border-y border-stone-200 bg-white pb-24 pt-16">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <SectionHeading
             eyebrow="Featured works"

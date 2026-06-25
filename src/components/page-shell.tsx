@@ -4,9 +4,9 @@ import { SiteHeader } from "@/components/site-header";
 
 export function PageShell({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen bg-[#fbf8f1] text-stone-950">
+    <div className="flex min-h-screen flex-col bg-[#fbf8f1] text-stone-950">
       <SiteHeader />
-      <main>{children}</main>
+      <main className="flex-1">{children}</main>
       <SiteFooter />
     </div>
   );

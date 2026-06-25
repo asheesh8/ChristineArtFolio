@@ -3,7 +3,7 @@ import { businessInfo } from "@/data/businessInfo";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-stone-200 bg-stone-950 text-stone-100">
+    <footer className="relative z-10 border-t border-stone-200 bg-stone-950 text-stone-100">
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-12 sm:px-8 md:grid-cols-[1.2fr_0.8fr_0.8fr]">
         <div>
           <p className="font-serif text-3xl">{businessInfo.brandName}</p>

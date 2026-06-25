@@ -1,30 +1,24 @@
 import { PrintInquiryForm } from "@/components/print-inquiry-form";
 import { PageShell } from "@/components/page-shell";
 import { SectionHeading } from "@/components/section-heading";
-import { orderingSteps } from "@/data/printOptions";
+import { Suspense } from "react";
 
 export default function OrderPrintsPage() {
   return (
     <PageShell>
-      <section className="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 lg:grid-cols-[0.85fr_1.15fr]">
-        <div>
+      <section className="mx-auto max-w-7xl px-5 py-12 sm:px-8 lg:py-16">
+        <div className="max-w-4xl">
           <SectionHeading
             eyebrow="Order prints"
-            title="Request a print, then Christine confirms the details."
-            copy="A guided print inquiry keeps the order process calm: choose the work, select print details, share contact information, then review before sending."
+            title="Choose a piece, then send a clean print inquiry."
+            copy="Browse the catalog, pick the artwork, and the form will carry its SKU through the request so Christine knows exactly which piece the client wants."
           />
-          <ol className="mt-8 grid gap-3">
-            {orderingSteps.map((step, index) => (
-              <li key={step} className="rounded-2xl border border-stone-200 bg-white p-4">
-                <span className="mr-3 font-serif text-2xl text-sage">
-                  {index + 1}
-                </span>
-                {step}
-              </li>
-            ))}
-          </ol>
         </div>
-        <PrintInquiryForm />
+        <div className="mt-10">
+          <Suspense fallback={<div className="rounded-[2rem] bg-white p-8">Loading catalog...</div>}>
+            <PrintInquiryForm />
+          </Suspense>
+        </div>
       </section>
     </PageShell>
   );

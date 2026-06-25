@@ -4,6 +4,7 @@ export type Artwork = {
   id: string;
   title: string;
   slug: string;
+  sku?: string;
   category: string;
   medium: string;
   description: string;
@@ -24,6 +25,18 @@ type ManifestItem = {
   guessed_title: string;
   bytes: number;
 };
+
+export function createArtworkSku(seed: string) {
+  let hash = 0;
+  for (let index = 0; index < seed.length; index += 1) {
+    hash = (hash * 31 + seed.charCodeAt(index)) >>> 0;
+  }
+  return `CP-${hash.toString(36).toUpperCase().padStart(6, "0").slice(0, 6)}`;
+}
+
+export function getArtworkSku(artwork: Pick<Artwork, "id" | "slug" | "sku">) {
+  return artwork.sku || createArtworkSku(artwork.slug || artwork.id);
+}
 
 const curatedArtworks: Artwork[] = [
   {
@@ -197,6 +210,7 @@ const scrapedArtworks: Artwork[] = (manifest as ManifestItem[])
       id: `scraped-${slugify(title, index)}`,
       title,
       slug: slugify(title, index),
+      sku: createArtworkSku(`${item.filename}-${index}`),
       category,
       medium,
       description:
@@ -218,3 +232,5 @@ export const featuredArtworks = artworks.filter((artwork) => artwork.featured);
 export const availableOriginals = artworks.filter(
   (artwork) => artwork.availableOriginal,
 );
+export const findArtworkBySku = (sku: string) =>
+  artworks.find((artwork) => getArtworkSku(artwork) === sku);

@@ -1,33 +1,20 @@
 "use client";
 
+import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
-import { artworks } from "@/data/artworks";
+import {
+  artworks,
+  findArtworkBySku,
+  getArtworkSku,
+  type Artwork,
+} from "@/data/artworks";
 import { framingOptions, printMaterials, printSizes } from "@/data/printOptions";
 
-const steps = [
-  {
-    eyebrow: "Step 1",
-    title: "Choose the artwork",
-    copy: "Start with the piece you want printed. Christine can confirm final print availability before production.",
-  },
-  {
-    eyebrow: "Step 2",
-    title: "Pick size and material",
-    copy: "Choose a starting size and surface. Custom sizing can be discussed in the message.",
-  },
-  {
-    eyebrow: "Step 3",
-    title: "Contact and framing",
-    copy: "Tell Christine how to reach you and whether framing should be part of the conversation.",
-  },
-  {
-    eyebrow: "Step 4",
-    title: "Review your inquiry",
-    copy: "Add any notes about room, deadline, gift timing, or framing ideas before submitting.",
-  },
-];
+const INQUIRIES_KEY = "christine-print-inquiries";
 
 type FormState = {
+  sku: string;
   artwork: string;
   size: string;
   material: string;
@@ -38,7 +25,15 @@ type FormState = {
   message: string;
 };
 
+export type PrintInquiry = FormState & {
+  id: string;
+  status: "New" | "Contacted" | "Quoted" | "Archived";
+  createdAt: string;
+  artworkImage: string;
+};
+
 const initialFormState: FormState = {
+  sku: "",
   artwork: "",
   size: "",
   material: "",
@@ -49,54 +44,68 @@ const initialFormState: FormState = {
   message: "",
 };
 
+function inquiryNumber() {
+  return `INQ-${Date.now().toString(36).toUpperCase().slice(-6)}`;
+}
+
+function saveInquiry(inquiry: PrintInquiry) {
+  const existing = JSON.parse(
+    window.localStorage.getItem(INQUIRIES_KEY) || "[]",
+  ) as PrintInquiry[];
+  window.localStorage.setItem(
+    INQUIRIES_KEY,
+    JSON.stringify([inquiry, ...existing].slice(0, 100)),
+  );
+}
+
 export function PrintInquiryForm() {
-  const [activeStep, setActiveStep] = useState(0);
+  const searchParams = useSearchParams();
   const [submitted, setSubmitted] = useState(false);
+  const [query, setQuery] = useState("");
   const [form, setForm] = useState<FormState>(initialFormState);
+  const urlSku = searchParams.get("sku") || "";
+  const effectiveSku = form.sku || urlSku;
+
+  const filteredArtworks = useMemo(() => {
+    const normalizedQuery = query.trim().toLowerCase();
+    if (!normalizedQuery) return artworks;
+    return artworks.filter((artwork) => {
+      const sku = getArtworkSku(artwork).toLowerCase();
+      return `${artwork.title} ${artwork.medium} ${artwork.category} ${sku}`
+        .toLowerCase()
+        .includes(normalizedQuery);
+    });
+  }, [query]);
 
   const selectedArtwork = useMemo(
-    () => artworks.find((artwork) => artwork.title === form.artwork),
-    [form.artwork],
+    () => findArtworkBySku(effectiveSku),
+    [effectiveSku],
   );
 
   function updateField(field: keyof FormState, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
   }
 
-  function canContinue() {
-    return isStepComplete(activeStep);
-  }
-
-  function isStepComplete(step: number) {
-    if (step === 0) return Boolean(form.artwork);
-    if (step === 1) return Boolean(form.size && form.material);
-    if (step === 2) return Boolean(form.name && form.email && form.framing);
-    return true;
-  }
-
-  function canVisitStep(step: number) {
-    if (step <= activeStep) return true;
-    return steps.slice(0, step).every((_, index) => isStepComplete(index));
+  function selectArtwork(artwork: Artwork) {
+    const sku = getArtworkSku(artwork);
+    setForm((current) => ({
+      ...current,
+      sku,
+      artwork: artwork.title,
+    }));
+    window.history.replaceState(null, "", `/order-prints?sku=${sku}`);
   }
 
   function canSubmit() {
-    return steps.every((_, index) => isStepComplete(index));
-  }
-
-  function nextStep() {
-    if (canContinue()) {
-      setActiveStep((current) => Math.min(current + 1, steps.length - 1));
-    }
-  }
-
-  function previousStep() {
-    setActiveStep((current) => Math.max(current - 1, 0));
-  }
-
-  function resetForm() {
-    setSubmitted(false);
-    setForm(initialFormState);
-    setActiveStep(0);
+    return Boolean(
+      effectiveSku &&
+        selectedArtwork &&
+        form.size &&
+        form.material &&
+        form.name &&
+        form.email &&
+        form.framing,
+    );
   }
 
   if (submitted) {
@@ -113,7 +122,10 @@ export function PrintInquiryForm() {
         </p>
         <div className="mt-8 rounded-2xl bg-[#e9ede4] p-5 text-sm leading-7 text-stone-700">
           <p>
-            <strong>Artwork:</strong> {form.artwork}
+            <strong>Artwork:</strong> {selectedArtwork?.title || form.artwork}
+          </p>
+          <p>
+            <strong>SKU:</strong> {effectiveSku}
           </p>
           <p>
             <strong>Print:</strong> {form.size} on {form.material}
@@ -122,7 +134,15 @@ export function PrintInquiryForm() {
             <strong>Framing:</strong> {form.framing}
           </p>
         </div>
-        <button type="button" className="btn-secondary mt-8" onClick={resetForm}>
+        <button
+          type="button"
+          className="btn-secondary mt-8"
+          onClick={() => {
+            setSubmitted(false);
+            setForm(initialFormState);
+            window.history.replaceState(null, "", "/order-prints");
+          }}
+        >
           Start Another Inquiry
         </button>
       </div>
@@ -130,243 +150,254 @@ export function PrintInquiryForm() {
   }
 
   return (
-    <form
-      className="rounded-[2rem] border border-stone-200 bg-white p-6 shadow-sm md:p-8"
-      onSubmit={(event) => {
-        event.preventDefault();
-        if (canSubmit()) {
-          setSubmitted(true);
-        }
-      }}
-    >
-      <div className="grid gap-3 sm:grid-cols-4">
-        {steps.map((step, index) => (
-          <button
-            key={step.title}
-            type="button"
-            className={`rounded-2xl border p-3 text-left transition ${
-              activeStep === index
-                ? "border-stone-950 bg-stone-950 text-white"
-                : canVisitStep(index)
-                  ? "border-stone-200 bg-[#fbf8f1] text-stone-500 hover:border-stone-400"
-                  : "cursor-not-allowed border-stone-100 bg-stone-50 text-stone-300"
-            }`}
-            disabled={!canVisitStep(index)}
-            onClick={() => {
-              if (canVisitStep(index)) {
-                setActiveStep(index);
-              }
-            }}
-          >
-            <span className="block text-[10px] font-semibold uppercase tracking-[0.18em]">
-              {step.eyebrow}
-            </span>
-            <span className="mt-1 block text-sm font-semibold">{step.title}</span>
-          </button>
-        ))}
-      </div>
-
-      <div className="mt-8 min-h-[24rem]">
-        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sage">
-          {steps[activeStep].eyebrow}
-        </p>
-        <h2 className="mt-3 font-serif text-4xl leading-none text-stone-950 md:text-5xl">
-          {steps[activeStep].title}
-        </h2>
-        <p className="mt-4 max-w-2xl text-sm leading-7 text-stone-600">
-          {steps[activeStep].copy}
-        </p>
-
-        {activeStep === 0 ? (
-          <div className="mt-8 grid gap-5 lg:grid-cols-[1fr_0.8fr]">
-            <label className="field-label">
-              Selected artwork
-              <select
-                required
-                name="artwork"
-                value={form.artwork}
-                className="field-input"
-                onChange={(event) => updateField("artwork", event.target.value)}
+    <div className="grid gap-6 lg:grid-cols-[0.78fr_1fr]">
+      <aside className="rounded-[2rem] border border-stone-200 bg-white p-4 shadow-sm lg:sticky lg:top-24 lg:max-h-[calc(100vh-8rem)]">
+        <div className="flex items-end justify-between gap-4 p-2">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sage">
+              Catalog
+            </p>
+            <h2 className="mt-2 font-serif text-4xl text-stone-950">
+              Pick artwork
+            </h2>
+          </div>
+          <p className="text-xs font-semibold text-stone-400">
+            {filteredArtworks.length} works
+          </p>
+        </div>
+        <input
+          className="field-input mx-2 mt-4 w-[calc(100%-1rem)]"
+          placeholder="Search title, medium, or SKU"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+        />
+        <div className="mt-4 grid max-h-[28rem] gap-3 overflow-y-auto pr-1 sm:grid-cols-2 lg:max-h-[calc(100vh-20rem)] lg:grid-cols-1">
+          {filteredArtworks.map((artwork) => {
+            const sku = getArtworkSku(artwork);
+            const isSelected = effectiveSku === sku;
+            return (
+              <button
+                key={artwork.id}
+                type="button"
+                className={`grid grid-cols-[4.25rem_1fr] gap-3 rounded-2xl border p-2 text-left transition ${
+                  isSelected
+                    ? "border-stone-950 bg-stone-950 text-white"
+                    : "border-stone-200 bg-[#fbf8f1] text-stone-800 hover:border-stone-400"
+                }`}
+                onClick={() => selectArtwork(artwork)}
               >
-                <option value="">Choose a piece</option>
-                {artworks.map((artwork) => (
-                  <option key={artwork.id} value={artwork.title}>
+                <span className="relative aspect-[4/5] overflow-hidden rounded-xl bg-stone-100">
+                  <Image
+                    src={artwork.image}
+                    alt={artwork.title}
+                    fill
+                    sizes="90px"
+                    className="object-cover"
+                  />
+                </span>
+                <span className="min-w-0 py-1">
+                  <span className="block truncate font-serif text-xl leading-tight">
                     {artwork.title}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <div className="rounded-2xl border border-stone-200 bg-[#fbf8f1] p-5">
+                  </span>
+                  <span
+                    className={`mt-1 block text-[10px] font-semibold uppercase tracking-[0.14em] ${
+                      isSelected ? "text-stone-300" : "text-sage"
+                    }`}
+                  >
+                    {sku}
+                  </span>
+                  <span
+                    className={`mt-2 block text-xs ${
+                      isSelected ? "text-stone-300" : "text-stone-500"
+                    }`}
+                  >
+                    {artwork.medium}
+                  </span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </aside>
+
+      <form
+        className="rounded-[2rem] border border-stone-200 bg-white p-6 shadow-sm md:p-8"
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (!canSubmit() || !selectedArtwork) return;
+          saveInquiry({
+            ...form,
+            sku: effectiveSku,
+            artwork: selectedArtwork.title,
+            id: inquiryNumber(),
+            status: "New",
+            createdAt: new Date().toISOString(),
+            artworkImage: selectedArtwork?.image || "",
+          });
+          setSubmitted(true);
+        }}
+      >
+        <div className="flex flex-wrap items-start justify-between gap-5">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sage">
+              Print inquiry
+            </p>
+            <h2 className="mt-3 font-serif text-5xl leading-none text-stone-950">
+              Request details
+            </h2>
+          </div>
+          <div className="rounded-2xl bg-[#fbf8f1] px-4 py-3 text-sm text-stone-600">
+            <strong className="text-stone-950">SKU:</strong>{" "}
+            {effectiveSku || "Choose from catalog"}
+          </div>
+        </div>
+
+        {selectedArtwork ? (
+          <div className="mt-8 grid gap-5 rounded-3xl border border-stone-200 bg-[#fbf8f1] p-4 sm:grid-cols-[7rem_1fr]">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-stone-100">
+              <Image
+                src={selectedArtwork.image}
+                alt={selectedArtwork.title}
+                fill
+                sizes="140px"
+                className="object-cover"
+              />
+            </div>
+            <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sage">
                 Selected piece
               </p>
-              <p className="mt-3 font-serif text-3xl text-stone-950">
-                {selectedArtwork?.title || "No artwork selected"}
+              <p className="mt-2 font-serif text-4xl text-stone-950">
+                {selectedArtwork.title}
               </p>
-              <p className="mt-3 text-sm leading-6 text-stone-600">
-                {selectedArtwork?.description ||
-                  "Pick an artwork and the next step will ask for print details."}
+              <p className="mt-2 text-sm text-stone-500">
+                {selectedArtwork.medium} · {selectedArtwork.category}
               </p>
-            </div>
-          </div>
-        ) : null}
-
-        {activeStep === 1 ? (
-          <div className="mt-8 grid gap-5 md:grid-cols-2">
-            <label className="field-label">
-              Print size
-              <select
-                required
-                name="size"
-                value={form.size}
-                className="field-input"
-                onChange={(event) => updateField("size", event.target.value)}
-              >
-                <option value="">Choose a size</option>
-                {printSizes.map((size) => (
-                  <option key={size} value={size}>
-                    {size}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="field-label">
-              Material
-              <select
-                required
-                name="material"
-                value={form.material}
-                className="field-input"
-                onChange={(event) => updateField("material", event.target.value)}
-              >
-                <option value="">Choose material</option>
-                {printMaterials.map((material) => (
-                  <option key={material} value={material}>
-                    {material}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-        ) : null}
-
-        {activeStep === 2 ? (
-          <div className="mt-8 grid gap-5 md:grid-cols-2">
-            <label className="field-label">
-              Customer name
-              <input
-                required
-                name="name"
-                value={form.name}
-                className="field-input"
-                onChange={(event) => updateField("name", event.target.value)}
-              />
-            </label>
-            <label className="field-label">
-              Email
-              <input
-                required
-                type="email"
-                name="email"
-                value={form.email}
-                className="field-input"
-                onChange={(event) => updateField("email", event.target.value)}
-              />
-            </label>
-            <label className="field-label">
-              Phone optional
-              <input
-                name="phone"
-                value={form.phone}
-                className="field-input"
-                onChange={(event) => updateField("phone", event.target.value)}
-              />
-            </label>
-            <label className="field-label">
-              Framing interest
-              <select
-                required
-                name="framing"
-                value={form.framing}
-                className="field-input"
-                onChange={(event) => updateField("framing", event.target.value)}
-              >
-                <option value="">Choose one</option>
-                {framingOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-        ) : null}
-
-        {activeStep === 3 ? (
-          <div className="mt-8 grid gap-5 lg:grid-cols-[1fr_0.8fr]">
-            <label className="field-label">
-              Message
-              <textarea
-                name="message"
-                rows={8}
-                value={form.message}
-                className="field-input resize-none"
-                placeholder="Tell Christine about the piece, room, deadline, or framing ideas."
-                onChange={(event) => updateField("message", event.target.value)}
-              />
-            </label>
-            <div className="rounded-2xl border border-stone-200 bg-[#fbf8f1] p-5 text-sm leading-7 text-stone-700">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sage">
-                Review
-              </p>
-              <p className="mt-4">
-                <strong>Artwork:</strong> {form.artwork || "Not selected"}
-              </p>
-              <p>
-                <strong>Size:</strong> {form.size || "Not selected"}
-              </p>
-              <p>
-                <strong>Material:</strong> {form.material || "Not selected"}
-              </p>
-              <p>
-                <strong>Name:</strong> {form.name || "Missing"}
-              </p>
-              <p>
-                <strong>Email:</strong> {form.email || "Missing"}
-              </p>
-              <p>
-                <strong>Framing:</strong> {form.framing || "Not selected"}
+              <p className="mt-4 text-sm leading-6 text-stone-600">
+                {selectedArtwork.description}
               </p>
             </div>
           </div>
-        ) : null}
-      </div>
-
-      {!canContinue() ? (
-        <p className="mt-2 rounded-2xl bg-[#f3eee4] p-4 text-sm font-semibold text-stone-700">
-          Complete this step to continue.
-        </p>
-      ) : null}
-
-      <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-stone-200 pt-6">
-        <button
-          type="button"
-          className="btn-secondary"
-          onClick={previousStep}
-          disabled={activeStep === 0}
-        >
-          Back
-        </button>
-        {activeStep < steps.length - 1 ? (
-          <button type="button" className="btn-primary" onClick={nextStep}>
-            Continue
-          </button>
         ) : (
+          <div className="mt-8 rounded-3xl border border-dashed border-stone-300 bg-[#fbf8f1] p-6 text-stone-600">
+            Choose an artwork from the catalog first. The SKU will stay attached
+            to the inquiry.
+          </div>
+        )}
+
+        <div className="mt-8 grid gap-5 md:grid-cols-2">
+          <label className="field-label">
+            Print size
+            <select
+              required
+              name="size"
+              value={form.size}
+              className="field-input"
+              onChange={(event) => updateField("size", event.target.value)}
+            >
+              <option value="">Choose a size</option>
+              {printSizes.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="field-label">
+            Material
+            <select
+              required
+              name="material"
+              value={form.material}
+              className="field-input"
+              onChange={(event) => updateField("material", event.target.value)}
+            >
+              <option value="">Choose material</option>
+              {printMaterials.map((material) => (
+                <option key={material} value={material}>
+                  {material}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="field-label">
+            Customer name
+            <input
+              required
+              name="name"
+              value={form.name}
+              className="field-input"
+              onChange={(event) => updateField("name", event.target.value)}
+            />
+          </label>
+          <label className="field-label">
+            Email
+            <input
+              required
+              type="email"
+              name="email"
+              value={form.email}
+              className="field-input"
+              onChange={(event) => updateField("email", event.target.value)}
+            />
+          </label>
+          <label className="field-label">
+            Phone optional
+            <input
+              name="phone"
+              value={form.phone}
+              className="field-input"
+              onChange={(event) => updateField("phone", event.target.value)}
+            />
+          </label>
+          <label className="field-label">
+            Framing interest
+            <select
+              required
+              name="framing"
+              value={form.framing}
+              className="field-input"
+              onChange={(event) => updateField("framing", event.target.value)}
+            >
+              <option value="">Choose one</option>
+              {framingOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+
+        <label className="field-label mt-5">
+          Message
+          <textarea
+            name="message"
+            rows={5}
+            value={form.message}
+            className="field-input resize-none"
+            placeholder="Tell Christine about room, deadline, gift timing, or framing ideas."
+            onChange={(event) => updateField("message", event.target.value)}
+          />
+        </label>
+
+        {!canSubmit() ? (
+          <p className="mt-5 rounded-2xl bg-[#f3eee4] p-4 text-sm font-semibold text-stone-700">
+            Pick an artwork and complete the required contact and print fields.
+          </p>
+        ) : null}
+
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-stone-200 pt-6">
+          <p className="text-sm text-stone-500">
+            Christine confirms final price and availability.
+          </p>
           <button type="submit" className="btn-primary" disabled={!canSubmit()}>
             Submit Inquiry
           </button>
-        )}
-      </div>
-    </form>
+        </div>
+      </form>
+    </div>
   );
 }
+
+export { INQUIRIES_KEY };

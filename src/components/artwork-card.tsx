@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Artwork } from "@/data/artworks";
+import { getArtworkSku, type Artwork } from "@/data/artworks";
 
 type ArtworkCardProps = {
   artwork: Artwork;
@@ -8,6 +8,8 @@ type ArtworkCardProps = {
 };
 
 export function ArtworkCard({ artwork, priority = false }: ArtworkCardProps) {
+  const sku = getArtworkSku(artwork);
+
   return (
     <article className="group overflow-hidden rounded-[2rem] border border-stone-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
       <div className="relative aspect-[4/5] overflow-hidden bg-stone-100">
@@ -35,7 +37,10 @@ export function ArtworkCard({ artwork, priority = false }: ArtworkCardProps) {
         </div>
         <p className="mt-4 text-sm leading-6 text-stone-600">{artwork.description}</p>
         <div className="mt-5 flex flex-wrap gap-3 text-sm font-semibold">
-          <Link href="/order-prints" className="text-stone-950 underline underline-offset-4">
+          <Link
+            href={`/order-prints?sku=${encodeURIComponent(sku)}`}
+            className="text-stone-950 underline underline-offset-4"
+          >
             Request Print
           </Link>
           <Link href="/contact" className="text-stone-500 hover:text-stone-950">

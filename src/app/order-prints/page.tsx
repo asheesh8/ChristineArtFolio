@@ -11,7 +11,7 @@ export default function OrderPrintsPage() {
           <SectionHeading
             eyebrow="Order prints"
             title="Request a print, then Christine confirms the details."
-            copy="This form is intentionally simple for the client preview. Later, it can write to Supabase, send email notifications, and connect to an admin review queue."
+            copy="A guided print inquiry keeps the order process calm: choose the work, select print details, share contact information, then review before sending."
           />
           <ol className="mt-8 grid gap-3">
             {orderingSteps.map((step, index) => (

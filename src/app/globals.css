@@ -61,6 +61,13 @@ textarea {
   transform: translateY(-1px);
 }
 
+.btn-primary:disabled,
+.btn-secondary:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  transform: none;
+}
+
 .btn-secondary {
   align-items: center;
   border: 1px solid #1c1917;

@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 
 type AdminUnlockProps = {
   children: ReactNode;
@@ -11,9 +12,14 @@ type AdminUnlockProps = {
 export function AdminUnlock({ children, className }: AdminUnlockProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   function unlock() {
     if (username.trim().toUpperCase() === "ART" && password.trim().toUpperCase() === "ART") {
@@ -39,9 +45,10 @@ export function AdminUnlock({ children, className }: AdminUnlockProps) {
         {children}
       </button>
 
-      {open ? (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-stone-950/45 px-5 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-[2rem] border border-stone-200 bg-[#fbf8f1] p-6 shadow-2xl">
+      {open && mounted
+        ? createPortal(
+            <div className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-stone-950/45 px-5 py-8 backdrop-blur-sm">
+          <div className="my-auto w-full max-w-md rounded-[2rem] border border-stone-200 bg-[#fbf8f1] p-6 shadow-2xl">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sage">
@@ -97,8 +104,10 @@ export function AdminUnlock({ children, className }: AdminUnlockProps) {
               Enter Studio Desk
             </button>
           </div>
-        </div>
-      ) : null}
+            </div>,
+            document.body,
+          )
+        : null}
     </>
   );
 }

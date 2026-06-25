@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { FacebookShowcase } from "@/components/facebook-showcase";
 import { PageShell } from "@/components/page-shell";
-import { ReviewsSection } from "@/components/reviews-section";
 import { SectionHeading } from "@/components/section-heading";
 import { businessInfo } from "@/data/businessInfo";
 
@@ -53,7 +53,7 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-      <ReviewsSection />
+      <FacebookShowcase />
     </PageShell>
   );
 }

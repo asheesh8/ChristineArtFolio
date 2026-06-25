@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AdminUnlock } from "@/components/admin-unlock";
 import { businessInfo } from "@/data/businessInfo";
 
 export function SiteFooter() {
@@ -6,7 +7,9 @@ export function SiteFooter() {
     <footer className="relative z-10 border-t border-stone-200 bg-stone-950 text-stone-100">
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-12 sm:px-8 md:grid-cols-[1.2fr_0.8fr_0.8fr]">
         <div>
-          <p className="font-serif text-3xl">{businessInfo.brandName}</p>
+          <AdminUnlock className="text-left font-serif text-3xl text-stone-100 transition hover:text-white">
+            {businessInfo.brandName}
+          </AdminUnlock>
           <p className="mt-4 max-w-md text-sm leading-7 text-stone-300">
             {businessInfo.tagline}
           </p>

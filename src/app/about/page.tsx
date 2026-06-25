@@ -15,7 +15,7 @@ export default function AboutPage() {
             title="Christine Porter"
             copy={businessInfo.intro}
           />
-          <div className="mt-8 rounded-[2rem] border border-stone-200 bg-white p-8 text-lg leading-9 text-stone-650">
+          <div className="mt-8 rounded-[2rem] border border-stone-200 bg-white p-8 text-lg leading-9 text-stone-600">
             <p>
               Christine&apos;s work feels rooted in observation: flowers, animals,
               landscapes, weather, and the small visual moments that make Vermont

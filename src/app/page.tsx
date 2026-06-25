@@ -88,14 +88,14 @@ export default function Home() {
       </section>
 
       <section className="bg-[#e9ede4] py-16">
-        <div className="mx-auto grid max-w-7xl gap-8 px-5 sm:px-8 lg:grid-cols-[0.85fr_0.95fr_1.05fr] lg:items-start">
-          <div>
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+          <div className="lg:sticky lg:top-24">
             <SectionHeading
               eyebrow="Originals"
               title="Available originals"
               copy="Browse original works, ask about availability, or request a print when the original is not the right fit."
             />
-            <div className="mt-8 grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
+            <div className="mt-8 grid gap-4 sm:grid-cols-3">
               <div className="rounded-[1.5rem] border border-stone-200 bg-white p-5">
                 <p className="font-serif text-4xl">{availableOriginals.length}</p>
                 <p className="mt-2 text-sm font-semibold uppercase tracking-[0.16em] text-sage">
@@ -103,14 +103,14 @@ export default function Home() {
                 </p>
               </div>
               <div className="rounded-[1.5rem] border border-stone-200 bg-white p-5">
-                <p className="font-serif text-4xl">Prints</p>
+                <p className="font-serif text-2xl">Prints</p>
                 <p className="mt-2 text-sm leading-6 text-stone-600">
                   Most works can begin as a print request while Christine confirms
                   sizing and availability.
                 </p>
               </div>
               <div className="rounded-[1.5rem] border border-stone-200 bg-white p-5">
-                <p className="font-serif text-4xl">Framing</p>
+                <p className="font-serif text-2xl">Framing</p>
                 <p className="mt-2 text-sm leading-6 text-stone-600">
                   Ask about framing ideas, gifting timelines, and local pickup.
                 </p>
@@ -126,14 +126,8 @@ export default function Home() {
             </div>
           </div>
 
-          {availableOriginals[0] ? (
-            <div className="lg:pt-12">
-              <ArtworkCard artwork={availableOriginals[0]} />
-            </div>
-          ) : null}
-
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-1">
-            {availableOriginals.slice(1, 4).map((artwork) => (
+          <div className="grid gap-6 sm:grid-cols-2">
+            {availableOriginals.slice(0, 4).map((artwork) => (
               <ArtworkCard key={artwork.id} artwork={artwork} />
             ))}
           </div>

@@ -1,9 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 
-export function AdminUnlock() {
+type AdminUnlockProps = {
+  children: ReactNode;
+  className?: string;
+};
+
+export function AdminUnlock({ children, className }: AdminUnlockProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [username, setUsername] = useState("");
@@ -24,15 +29,14 @@ export function AdminUnlock() {
     <>
       <button
         type="button"
-        className="origin-left font-serif text-xl tracking-tight text-stone-950 transition duration-300 ease-out hover:scale-110 hover:text-sage"
-        title="Christine Porter"
+        className={className}
         onClick={(event) => {
           if (event.detail >= 3) {
             setOpen(true);
           }
         }}
       >
-        Christine Porter
+        {children}
       </button>
 
       {open ? (

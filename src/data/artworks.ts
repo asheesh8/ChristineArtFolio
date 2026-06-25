@@ -154,15 +154,44 @@ const curatedArtworks: Artwork[] = [
   },
 ];
 
-const curatedImages = new Set(curatedArtworks.map((artwork) => artwork.image));
+const HASH_SUFFIX = /-[0-9a-f]{10}\.(jpg|jpeg|png|webp|gif)$/i;
 
-function titleFromManifest(item: ManifestItem, index: number) {
-  const title = (item.guessed_title || item.alt || "").trim().replace(/"+/g, "");
-  if (title && title.toLowerCase() !== "artwork") {
-    return title;
-  }
-  return `Catalog Piece ${String(index + 1).padStart(3, "0")}`;
+function baseName(filename: string) {
+  return filename.replace(HASH_SUFFIX, "");
 }
+
+// Base names already represented by a curated piece, so the scraped catalog
+// never duplicates a hand-picked work at a different resolution.
+const curatedBaseNames = new Set(
+  curatedArtworks.map((artwork) => baseName(artwork.image.split("/").pop() ?? "")),
+);
+
+function cleanTitle(raw: string) {
+  return raw
+    .trim()
+    .replace(/"+/g, "")
+    .replace(/\bColoerd\b/gi, "Colored")
+    .replace(/\s+/g, " ");
+}
+
+// Collapse the scraped manifest down to unique, meaningfully-titled works:
+// drop the generic untitled "Artwork" noise, drop anything already curated,
+// and keep only the largest rendition when the same piece appears at several
+// resolutions (same base filename).
+const dedupedManifest = (() => {
+  const byBase = new Map<string, ManifestItem>();
+  for (const item of manifest as ManifestItem[]) {
+    const title = (item.guessed_title || item.alt || "").trim().toLowerCase();
+    if (!title || title === "artwork") continue;
+    const base = baseName(item.filename);
+    if (curatedBaseNames.has(base)) continue;
+    const existing = byBase.get(base);
+    if (!existing || item.bytes > existing.bytes) {
+      byBase.set(base, item);
+    }
+  }
+  return [...byBase.values()].sort((a, b) => b.bytes - a.bytes);
+})();
 
 function slugify(value: string, index: number) {
   const slug = value
@@ -198,34 +227,31 @@ function inferCategory(title: string, medium: string) {
   return "Vermont Scenes";
 }
 
-const scrapedArtworks: Artwork[] = (manifest as ManifestItem[])
-  .filter((item) => !curatedImages.has(`/christine-assets/${item.filename}`))
-  .map((item, index) => {
-    const title = titleFromManifest(item, index);
-    const medium = inferMedium(title);
-    const category = inferCategory(title, medium);
-    const isOriginal = medium !== "Photography" && medium !== "Cyanotype";
+const scrapedArtworks: Artwork[] = dedupedManifest.map((item, index) => {
+  const title = cleanTitle(item.guessed_title || item.alt);
+  const medium = inferMedium(title);
+  const category = inferCategory(title, medium);
+  const isOriginal = medium !== "Photography" && medium !== "Cyanotype";
 
-    return {
-      id: `scraped-${slugify(title, index)}`,
-      title,
-      slug: slugify(title, index),
-      sku: createArtworkSku(`${item.filename}-${index}`),
-      category,
-      medium,
-      description:
-        item.alt || item.guessed_title
-          ? `A cataloged work from Christine's current art and photography collection.`
-          : `An untitled work available for collector review and inquiry.`,
-      image: `/christine-assets/${item.filename}`,
-      availableOriginal: isOriginal,
-      originalStatus: isOriginal ? "Inquire" : "Prints Only",
-      price: isOriginal ? "Inquire" : "Print inquiry",
-      dimensions: isOriginal ? "Dimensions to confirm" : "Multiple print sizes",
-      featured: false,
-      sourceUrl: item.source_page || item.image_url,
-    };
-  });
+  return {
+    id: `scraped-${slugify(title, index)}`,
+    title,
+    slug: slugify(title, index),
+    sku: createArtworkSku(`${item.filename}-${index}`),
+    category,
+    medium,
+    description: isOriginal
+      ? `An original ${medium.toLowerCase()} work from Christine's Vermont studio, available for collector inquiry.`
+      : `A print-ready ${medium.toLowerCase()} scene from Christine's Vermont collection.`,
+    image: `/christine-assets/${item.filename}`,
+    availableOriginal: isOriginal,
+    originalStatus: isOriginal ? "Inquire" : "Prints Only",
+    price: isOriginal ? "Inquire" : "Print inquiry",
+    dimensions: isOriginal ? "Dimensions to confirm" : "Multiple print sizes",
+    featured: false,
+    sourceUrl: item.source_page || item.image_url,
+  };
+});
 
 export const artworks: Artwork[] = [...curatedArtworks, ...scrapedArtworks];
 export const featuredArtworks = artworks.filter((artwork) => artwork.featured);

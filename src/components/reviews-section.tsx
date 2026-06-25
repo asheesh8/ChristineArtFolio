@@ -97,7 +97,7 @@ export function HeroReviews() {
                 </div>
                 <Stars rating={review.rating} />
               </div>
-              <p className="mt-3 line-clamp-2 text-sm leading-6 text-stone-650">
+              <p className="mt-3 line-clamp-2 text-sm leading-6 text-stone-600">
                 “{review.text}”
               </p>
             </article>

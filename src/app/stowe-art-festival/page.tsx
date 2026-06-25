@@ -11,7 +11,7 @@ export default function StoweArtFestivalPage() {
           title="Updates after the display loss"
           copy="After the Stowe Art Festival display loss, Christine shared updates about available artwork and remaining pieces. This page helps organize current works, print requests, and original artwork inquiries in one clear place."
         />
-        <div className="mt-10 rounded-[2rem] border border-stone-200 bg-white p-8 text-lg leading-9 text-stone-650">
+        <div className="mt-10 rounded-[2rem] border border-stone-200 bg-white p-8 text-lg leading-9 text-stone-600">
           <p>
             This section is designed to stay factual and calm. It can hold
             Christine&apos;s own updates, current availability, recovered or remaining

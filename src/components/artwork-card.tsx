@@ -11,7 +11,7 @@ export function ArtworkCard({ artwork, priority = false }: ArtworkCardProps) {
   const sku = getArtworkSku(artwork);
 
   return (
-    <article className="group overflow-hidden rounded-[2rem] border border-stone-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+    <article className="group overflow-hidden rounded-xl border border-stone-200/80 bg-white/82 shadow-sm backdrop-blur transition duration-300 hover:-translate-y-1 hover:bg-white hover:shadow-xl">
       <div className="relative aspect-[4/5] overflow-hidden bg-stone-100">
         <Image
           src={artwork.image}

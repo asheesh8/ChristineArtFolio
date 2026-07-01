@@ -12,16 +12,16 @@ import { orderingSteps } from "@/data/printOptions";
 export default function Home() {
   return (
     <PageShell>
-      <section className="mx-auto grid max-w-7xl gap-12 px-5 py-16 sm:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:py-24">
-        <div className="flex flex-col justify-between">
+      <section className="mx-auto grid min-h-[calc(100vh-5rem)] max-w-7xl gap-10 px-5 py-12 sm:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(360px,0.82fr)] lg:items-center lg:py-16">
+        <div className="artfolio-pane rounded-[2rem] p-6 sm:p-8 lg:p-10">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-sage">
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-stone-600">
               Cambridge, Vermont
             </p>
-            <h1 className="mt-6 max-w-4xl font-serif text-7xl leading-[0.9] tracking-tight text-stone-950 md:text-9xl">
+            <h1 className="mt-6 max-w-4xl font-serif text-6xl leading-[0.92] tracking-tight text-stone-950 sm:text-7xl md:text-8xl xl:text-9xl">
               Christine Porter Fine Art
             </h1>
-            <p className="mt-8 max-w-2xl text-xl leading-9 text-stone-600">
+            <p className="mt-8 max-w-2xl text-lg leading-8 text-stone-700 sm:text-xl sm:leading-9">
               {businessInfo.tagline}
             </p>
             <HeroReviews />
@@ -38,11 +38,20 @@ export default function Home() {
             </Link>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-4">
+
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
           {featuredArtworks.slice(0, 4).map((artwork, index) => (
             <div
               key={artwork.id}
-              className={index === 1 ? "pt-12" : index === 2 ? "-mt-10" : ""}
+              className={
+                index === 1
+                  ? "pt-10"
+                  : index === 2
+                    ? "-mt-8"
+                    : index === 3
+                      ? "pt-4"
+                      : ""
+              }
             >
               <ArtworkCard artwork={artwork} priority={index < 2} />
             </div>
@@ -50,35 +59,18 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-y border-stone-200 bg-white pb-24 pt-16">
-        <div className="mx-auto max-w-7xl px-5 sm:px-8">
-          <SectionHeading
-            eyebrow="Featured works"
-            title="A softer catalog for artwork with a sense of place."
-            copy="Christine's work is gathered into a calm, editorial layout that feels more like a fine art print room than a generic portfolio."
-          />
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
-            {featuredArtworks.slice(0, 3).map((artwork) => (
-              <ArtworkCard key={artwork.id} artwork={artwork} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-5 py-16 sm:px-8">
-        <SectionHeading
-          eyebrow="Browse"
-          title="Gallery categories"
-          copy="Organized by subject and medium so collectors can browse photography, original paintings, and print-ready works without the old gallery clutter."
-        />
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="mx-auto max-w-7xl px-5 py-8 sm:px-8">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {categories.map((category) => (
             <Link
               key={category.slug}
               href="/gallery"
-              className="rounded-[1.5rem] border border-stone-200 bg-white p-6 transition hover:-translate-y-1 hover:shadow-lg"
+              className="artfolio-panel group rounded-xl p-5 transition duration-300 hover:-translate-y-1 hover:bg-white/86"
             >
-              <p className="font-serif text-3xl">{category.name}</p>
+              <div className="flex items-start justify-between gap-4">
+                <p className="font-serif text-3xl leading-none">{category.name}</p>
+                <span className="text-lg transition group-hover:translate-x-1">&rarr;</span>
+              </div>
               <p className="mt-4 text-sm leading-6 text-stone-600">
                 {category.description}
               </p>
@@ -87,7 +79,24 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-[#e9ede4] py-16">
+      <section className="py-14">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8">
+          <SectionHeading
+            eyebrow="Featured works"
+            title="A softer catalog for artwork with a sense of place."
+            copy="Christine's work is gathered into a calm, editorial layout that feels more like a fine art print room than a generic portfolio."
+          />
+          <div className="mt-10 grid gap-5 md:grid-cols-3">
+            {featuredArtworks.slice(0, 3).map((artwork, index) => (
+              <div key={artwork.id} className={index === 1 ? "md:mt-12" : ""}>
+                <ArtworkCard artwork={artwork} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#e9ede4]/72 py-16 backdrop-blur-sm">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
           <div className="lg:sticky lg:top-24">
             <SectionHeading
@@ -96,20 +105,20 @@ export default function Home() {
               copy="Browse original works, ask about availability, or request a print when the original is not the right fit."
             />
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
-              <div className="rounded-[1.5rem] border border-stone-200 bg-white p-5">
+              <div className="artfolio-panel rounded-xl p-5">
                 <p className="font-serif text-4xl">{availableOriginals.length}</p>
                 <p className="mt-2 text-sm font-semibold uppercase tracking-[0.16em] text-sage">
                   original inquiries
                 </p>
               </div>
-              <div className="rounded-[1.5rem] border border-stone-200 bg-white p-5">
+              <div className="artfolio-panel rounded-xl p-5">
                 <p className="font-serif text-2xl">Prints</p>
                 <p className="mt-2 text-sm leading-6 text-stone-600">
                   Most works can begin as a print request while Christine confirms
                   sizing and availability.
                 </p>
               </div>
-              <div className="rounded-[1.5rem] border border-stone-200 bg-white p-5">
+              <div className="artfolio-panel rounded-xl p-5">
                 <p className="font-serif text-2xl">Framing</p>
                 <p className="mt-2 text-sm leading-6 text-stone-600">
                   Ask about framing ideas, gifting timelines, and local pickup.
@@ -137,7 +146,7 @@ export default function Home() {
       <FacebookShowcase />
 
       <section className="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 lg:grid-cols-[0.9fr_1.1fr]">
-        <div>
+        <div className="artfolio-pane rounded-[2rem] p-6 sm:p-8">
           <SectionHeading
             eyebrow="Print ordering"
             title="A clear path from favorite piece to finished print."
@@ -151,7 +160,7 @@ export default function Home() {
           {orderingSteps.map((step, index) => (
             <li
               key={step}
-              className="flex items-center gap-5 rounded-[1.25rem] border border-stone-200 bg-white p-5"
+              className="artfolio-panel flex items-center gap-5 rounded-xl p-5"
             >
               <span className="font-serif text-4xl text-sage">
                 {String(index + 1).padStart(2, "0")}
@@ -162,7 +171,7 @@ export default function Home() {
         </ol>
       </section>
 
-      <section className="border-y border-stone-200 bg-white py-16">
+      <section className="border-y border-stone-200/60 bg-white/68 py-16 backdrop-blur">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-[1fr_1fr]">
           <SectionHeading
             eyebrow="Stowe Art Festival"

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 type AdminUnlockProps = {
@@ -12,14 +12,9 @@ type AdminUnlockProps = {
 export function AdminUnlock({ children, className }: AdminUnlockProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   function unlock() {
     if (username.trim().toUpperCase() === "ART" && password.trim().toUpperCase() === "ART") {
@@ -45,7 +40,7 @@ export function AdminUnlock({ children, className }: AdminUnlockProps) {
         {children}
       </button>
 
-      {open && mounted
+      {open && typeof document !== "undefined"
         ? createPortal(
             <div className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-stone-950/45 px-5 py-8 backdrop-blur-sm">
           <div className="my-auto w-full max-w-md rounded-[2rem] border border-stone-200 bg-[#fbf8f1] p-6 shadow-2xl">

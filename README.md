@@ -2,6 +2,12 @@
 
 Modern artist website and print-ordering catalog for Christine Porter Fine Art / Christine Porter Photography.
 
+**Live:** https://christine-art-folio.vercel.app
+
+**Stack:** Next.js 16 (App Router) + React 19 + TypeScript + Tailwind CSS 4. Content lives in `src/data/*.ts`; there is no database or server API yet, and no environment variables. Deployed on Vercel (`vercel.json`); pushes to `main` go to production.
+
+> The `/admin` dashboard keeps its changes in the browser only, and its unlock check runs client-side, so it is not real access control. Treat it as a demo until it is backed by server-side auth and a database.
+
 ## Run locally
 
 ```bash
